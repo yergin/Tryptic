@@ -54,6 +54,7 @@ void settings() {
 void setup() {
   preview = new Preview();
   opc = new MyOPC("127.0.0.1", 7890, CAPTURE_WIDTH, CAPTURE_HEIGHT);
+  opc.showLocations(false);
   frontSyphonClient = new SyphonClient(this, "TrypticTester", "Front");
   backSyphonClient = new SyphonClient(this, "TrypticTester", "Back");
   
@@ -83,8 +84,6 @@ void draw() {
 }
 
 class Preview extends PApplet {
-  //JFrame frame;
-
   public Preview() {
     super();
     PApplet.runSketch(new String[]{this.getClass().getName()}, this);

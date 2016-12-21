@@ -254,9 +254,7 @@ public class OPC
       ledAddress += 3;
     }
 
-    if (enableShowLocations) {
-      pg.updatePixels();
-    }
+    pg.updatePixels();
   }
   
   // Change the number of pixels in our output packet.
@@ -298,7 +296,7 @@ public class OPC
     if (packetData == null || packetData.length < offset + 3) {
       return 0;
     }
-    return (packetData[offset] << 16) | (packetData[offset + 1] << 8) | packetData[offset + 2];
+    return toColor(packetData[offset + 2], packetData[offset + 1], packetData[offset]);
   }
 
   // Transmit our current buffer of pixel values to the OPC server. This is handled
@@ -335,6 +333,13 @@ public class OPC
     output = null;
   }
 
+  color toColor(byte r, byte g, byte b) {
+    int red = 0x000000FF & r;
+    int green = 0x000000FF & g;
+    int blue = 0x000000FF & b;
+    return 0xFF000000 | (blue << 16) | (green << 8) | red;
+  }
+  
   void connect()
   {
     // Try to connect to the OPC server. This normally happens automatically in draw()
