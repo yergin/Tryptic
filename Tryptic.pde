@@ -100,6 +100,7 @@ class Preview extends PApplet {
 
   public void draw() {
     background(0);
+    noStroke();
     for (int i = 0; i < opc.pixelLocations.length; ++i) {
       int x = opc.pixelLocations[i] % CAPTURE_WIDTH * 2;
       int y = opc.pixelLocations[i] / CAPTURE_WIDTH * 2;
