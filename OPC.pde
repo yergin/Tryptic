@@ -220,7 +220,7 @@ public class OPC
   // separately.
   void capture(PImage pg, int group)
   {
-    if (pixelLocations == null) {
+    if (pg == null || pixelLocations == null) {
       // No pixels defined yet
       return;
     }
