@@ -42,9 +42,16 @@ public class OPC
     if (pixelLocations == null) {
       pixelLocations = new int[index + 1];
       pixelGroups = new int[index + 1];
+      for (int i = 0; i < index + 1; ++i) {
+        pixelLocations[i] = -1;
+      }
     } else if (index >= pixelLocations.length) {
+      int previousLength = pixelLocations.length;
       pixelLocations = Arrays.copyOf(pixelLocations, index + 1);
       pixelGroups = Arrays.copyOf(pixelGroups, index + 1);
+      for (int i =previousLength; i < index; ++i) {
+        pixelLocations[i] = -1;
+      }
     }
 
     pixelLocations[index] = x + captureWidth * y;
@@ -225,13 +232,13 @@ public class OPC
       return;
     }
  
-    //if (output == null) {
-    //  // Try to (re)connect
-    //  connect();
-    //}
-    //if (output == null) {
-    //  return;
-    //}
+    if (output == null) {
+      // Try to (re)connect
+      connect();
+    }
+    if (output == null) {
+      return;
+    }
 
     int numPixels = pixelLocations.length;
     int ledAddress = 4;
@@ -280,7 +287,7 @@ public class OPC
   {
     int offset = 4 + number * 3;
     if (packetData == null || packetData.length < offset + 3) {
-      setPixelCount(number + 1);
+      setPixelCount(number);
     }
 
     packetData[offset] = (byte) (c >> 16);

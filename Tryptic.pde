@@ -83,6 +83,16 @@ void draw() {
     image(backCapture, 0, -CAPTURE_HEIGHT, CAPTURE_WIDTH, -CAPTURE_HEIGHT);
 }
 
+color halfBrightness(color c) {
+  return ((c & 0x00FEFEFE) >> 1) | (c & 0xFF000000);
+}
+
+color threeQuarterBrightness(color c) {
+  int half = (c & 0x00FEFEFE) >> 1;
+  int quarter = (c & 0x00FCFCFC) >> 2;
+  return (half + quarter) | (c & 0xFF000000);
+}
+
 class Preview extends PApplet {
   public Preview() {
     super();
@@ -98,17 +108,26 @@ class Preview extends PApplet {
   }
 
   public void draw() {
+    final float PERSPECTIVE = 0.96;
     background(0);
+    blendMode(ADD);
     noStroke();
     for (int i = 0; i < opc.pixelLocations.length; ++i) {
+      if (opc.pixelLocations[i] < 0) {
+        continue;
+      }
       int x = opc.pixelLocations[i] % CAPTURE_WIDTH * 2;
       int y = opc.pixelLocations[i] / CAPTURE_WIDTH * 2;
-      if (opc.pixelGroups[i] == BACK_GROUP) {
-        x = (int)(0.95 * (x - CAPTURE_WIDTH)) + CAPTURE_WIDTH;
-        y = (int)(0.95 * (y - CAPTURE_HEIGHT)) + CAPTURE_HEIGHT;
+      color c = opc.pixelGroups[i] == BACK_GROUP ? threeQuarterBrightness(opc.getPixel(i)) : opc.getPixel(i);
+      float scale = opc.pixelGroups[i] == BACK_GROUP ? PERSPECTIVE : 1.0;
+      for (int r = 0; r < 5; ++r) {       
+        int finalX = (int)(scale * (x - CAPTURE_WIDTH)) + CAPTURE_WIDTH;
+        int finalY = (int)(scale * (y - CAPTURE_HEIGHT)) + CAPTURE_HEIGHT;
+        fill(c);
+        ellipse(finalX, finalY, 6, 6);
+        c = halfBrightness(c);
+        scale = scale * PERSPECTIVE * PERSPECTIVE;
       }
-      fill(opc.getPixel(i));
-      ellipse(x, y, 6, 6);
     }
   }
 }
